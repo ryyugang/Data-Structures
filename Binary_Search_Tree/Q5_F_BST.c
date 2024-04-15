@@ -54,12 +54,13 @@ int main()
 
 	printf("1: Insert an integer into the binary search tree;\n");
 	printf("2: Print the post-order traversal of the binary search tree;\n");
+	printf("3: Enter the value to remove;\n");
 	printf("0: Quit;\n");
 
 
 	while (c != 0)
 	{
-		printf("Please input your choice(1/2/0): ");
+		printf("Please input your choice(1/2/3/0): ");
 		scanf("%d", &c);
 
 		switch (c)
@@ -74,6 +75,15 @@ int main()
 			postOrderIterativeS2(root); // You need to code this function
 			printf("\n");
 			break;
+		case 3:
+    		printf("The target value is : ");
+    		scanf("%d", &i);
+    		root = removeNodeFromTree(root, i);
+			printf("The resulting post-order traversal of the binary search tree is: ");
+			postOrderIterativeS2(root);
+			printf("\n");
+    		break;
+
 		case 0:
 			removeAll(&root);
 			break;
@@ -91,14 +101,99 @@ int main()
 
 void postOrderIterativeS2(BSTNode *root)
 {
-	 /* add your code here */
+	Stack *s1 = malloc(sizeof(Stack));
+	Stack *s2 = malloc(sizeof(Stack));
+	s1 -> top = NULL;
+	s2 -> top = NULL;
+	BSTNode *tmp = root;
+
+	if (root == NULL)
+	{
+		return;
+	}
+	
+	push(s1, tmp);
+	while (!isEmpty(s1))
+	{
+		tmp = pop(s1);
+		push(s2, tmp);
+
+		if (tmp -> left != NULL)
+		{
+			push(s1, tmp -> left);
+		}
+		if (tmp -> right != NULL)
+		{
+			push(s1, tmp -> right);
+		}
+	}
+
+	while (!isEmpty(s2))
+	{
+		tmp = pop(s2);
+		printf("%d ", tmp -> item);
+	}
+
+	free(s1);
+	free(s2);
 }
 
 /* Given a binary search tree and a key, this function
    deletes the key and returns the new root. Make recursive function. */
 BSTNode* removeNodeFromTree(BSTNode *root, int value)
 {
-	/* add your code here */
+	// 노드가 비었을 때
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	
+	// binary tree는 루트보다 작은 값이 왼쪽자식 노드에 위치
+	// 탐색 돌리면서 타겟 노드 찾음
+	if (value < root -> item)
+	{
+		root -> left = removeNodeFromTree(root -> left, value);
+	}
+	else if (value > root -> item)
+	{
+		root -> right = removeNodeFromTree(root -> right, value);
+	}
+	else // 위치가 특정되었을 때
+	{
+		// 해당 노드가 자식 없는 노드일 때
+		if (root -> left == NULL && root -> right == NULL)
+		{
+			free(root);
+			return NULL;
+		}
+		// 해당 노드가 자식 하나 있는 노드일 때
+		if (root -> left == NULL)
+		{
+			BSTNode *tmp = root -> right;
+			free(root);
+			return tmp;
+		}
+		else if (root -> right == NULL)
+		{
+			BSTNode *tmp = root -> left;
+			free(root);
+			return tmp;
+		}
+
+		// 해당 노드가 자식 두개 있는 노드일 때
+		BSTNode *minrightNode = root -> right;
+		
+		// 오른쪽 자식트리에서 가장 작은 값을 가진 노드를 찾음
+		while (minrightNode -> left != NULL)
+		{
+			minrightNode = minrightNode -> left;
+		}
+		// 찾은 노드의 값을 삭제할 노드에 복사
+		root -> item = minrightNode -> item;
+		// 오른쪽 자식트리에서 가장 작은 값을 가진 노드를 삭제
+		root -> right = removeNodeFromTree(root -> right, minrightNode -> item);
+	}
+	return root;
 }
 ///////////////////////////////////////////////////////////////////////////////
 

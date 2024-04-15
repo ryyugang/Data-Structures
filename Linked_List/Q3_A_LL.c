@@ -11,10 +11,10 @@ Purpose: Implementing the required functions for Question 3 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
-typedef struct _listnode
+typedef struct _ListNode
 {
 	int item;
-	struct _listnode *next;
+	struct _ListNode *next;
 } ListNode;			// You should not change the definition of ListNode
 
 typedef struct _linkedlist
@@ -86,7 +86,39 @@ int main()
 
 void moveOddItemsToBack(LinkedList *ll)
 {
-	/* add your code here */
+	ListNode *pre = NULL ;
+	ListNode *cur = ll -> head ;
+	ListNode *tail = NULL ;
+
+	if (ll == NULL)
+		return ;
+
+	ListNode *tmp = malloc(sizeof(ListNode)) ;
+	tmp -> next = ll -> head ;
+	ll -> head = tmp ;
+
+	while (cur != NULL)
+	{
+		tail = cur ;
+		cur = cur -> next ;
+	}
+	cur = ll -> head -> next ;
+	pre = ll -> head ;
+
+	while (cur != NULL && ll -> size--)
+	{
+		if (cur -> item % 2 != 0)
+		{
+			tail -> next = cur ;
+			pre -> next = cur -> next ;
+			cur -> next = NULL ;
+			cur = pre ;
+			tail = tail -> next ;
+		}
+		pre = cur ;
+		cur = cur -> next ;
+	}
+	ll -> head = ll -> head -> next ;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

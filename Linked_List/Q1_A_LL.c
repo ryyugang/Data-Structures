@@ -90,7 +90,50 @@ int main()
 
 int insertSortedLL(LinkedList *ll, int item)
 {
-	/* add your code here */
+	ListNode *cur = NULL, *tmp, *node = ll -> head;
+	int index = 0; // index return 해야하니까 0부터 만들어줌
+
+	if (ll -> head == NULL) // 리스트 비어있으면 새로운 노드 생성
+	{
+		ll -> head = malloc(sizeof(ListNode)) ;
+		ll -> head -> next = NULL ;
+		ll -> head -> item = item ;
+		ll -> size++;
+
+		return 0;
+	}
+	
+	while (node != NULL)
+	{
+		if (node -> item == item) // 리스트에 입력 값이 존재하면 -1 리턴
+			return -1 ;
+		else if (node -> item > item) // 입력 값보다 큰 값을 가진 노드를 만나면
+		{
+			tmp = malloc(sizeof(ListNode)) ; // tmp 포인터에 새로운 노드 생성
+			tmp -> next = node;
+			tmp -> item = item ;
+
+			if (cur != NULL) // tmp의 item이 cur의 item보다 한칸 더 큰 상태
+				cur -> next = tmp ; 
+			else  // 리스트에 아이템이 없는 상태
+				ll -> head = tmp ;
+
+			return index ;
+		}
+		cur = node ; // node는 ll -> head, cur은 NULL (최초 상태)
+		node = node -> next ; // 한칸씩 오른쪽으로 옮기는 것
+		index ++;
+	}
+
+	// 리스트에 존재하는 값보다 입력 값이 큰 경우, 그냥 노드 생성
+	node = malloc(sizeof(ListNode)) ;
+	node -> next = NULL ;
+	node -> item = item ;
+	cur -> next = node ;
+	ll -> size++ ;
+	// 위 while문을 돌면서 검색 결과 입력값 이상의 값이 없다는 거니까, index 증가 따로 x
+	return index ;
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
